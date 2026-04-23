@@ -85,6 +85,29 @@ nav {
   text-decoration: none;
 }
 
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+}
+
+.lang-switch a,
+.lang-switch span {
+  color: var(--text-muted);
+}
+
+.lang-switch a:hover {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.lang-switch .active {
+  color: var(--gold);
+}
+
 /* ── Container ── */
 .container {
   max-width: 760px;
@@ -375,8 +398,17 @@ footer {
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
+  nav {
+    height: auto;
+    min-height: 60px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
   .nav-links {
     gap: 14px;
+    flex-wrap: wrap;
   }
   .hero {
     padding: 70px 20px 60px;
