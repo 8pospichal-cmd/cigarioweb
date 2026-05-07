@@ -18,7 +18,21 @@
       <li><a href="/terms/">Podmínky</a></li>
       <li class="lang-switch"><span class="active">CS</span><span>|</span><a href="/">EN</a></li>
     </ul>
+    <button class="nav-hamburger" id="nav-toggle" aria-label="Otevřít menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <div class="nav-dropdown" id="nav-dropdown">
+    <a href="/support/" class="nav-dropdown-item">Podpora</a>
+    <a href="/privacy/" class="nav-dropdown-item">Ochrana soukromí</a>
+    <a href="/terms/" class="nav-dropdown-item">Obchodní podmínky</a>
+    <div class="nav-dropdown-lang">
+      <span class="active">CS</span>
+      <span class="sep">|</span>
+      <a href="/">EN</a>
+    </div>
+  </div>
 
   <!-- Hero -->
   <section class="hero">
@@ -209,6 +223,7 @@
 
   <script>
   (function () {
+    /* ── Scroll reveal ── */
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -216,11 +231,40 @@
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.04, rootMargin: '0px 0px -20px 0px' });
 
     document.querySelectorAll('.reveal').forEach(function (el) {
       observer.observe(el);
     });
+
+    /* ── Hamburger menu ── */
+    var toggle   = document.getElementById('nav-toggle');
+    var dropdown = document.getElementById('nav-dropdown');
+
+    if (toggle && dropdown) {
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = dropdown.classList.toggle('open');
+        toggle.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', open);
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!dropdown.contains(e.target) && !toggle.contains(e.target)) {
+          dropdown.classList.remove('open');
+          toggle.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      dropdown.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          dropdown.classList.remove('open');
+          toggle.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
   })();
   </script>
 </body>

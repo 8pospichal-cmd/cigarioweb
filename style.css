@@ -828,19 +828,101 @@ footer {
   background: rgba(255,255,255,0.10);
 }
 
+/* ── Hamburger button ── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: var(--text-secondary);
+  border-radius: 2px;
+  transition: transform 0.24s ease, opacity 0.24s ease;
+}
+
+.nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* ── Mobile dropdown ── */
+.nav-dropdown {
+  display: none;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  background: rgba(10,10,15,0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  padding: 6px 0 12px;
+}
+
+.nav-dropdown.open {
+  display: flex;
+}
+
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: color 0.15s;
+}
+
+.nav-dropdown-item:hover,
+.nav-dropdown-item:active {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.nav-dropdown-lang {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.nav-dropdown-lang a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.nav-dropdown-lang a:hover { color: var(--gold); }
+.nav-dropdown-lang .active { color: var(--gold); }
+.nav-dropdown-lang .sep { color: var(--text-muted); }
+
 /* ── Responsive ── */
-@media (max-width: 600px) {
+@media (max-width: 640px) {
+  .nav-hamburger { display: flex; }
+  .nav-links { display: none; }
   nav {
-    height: auto;
-    min-height: 60px;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .nav-links {
-    gap: 14px;
-    flex-wrap: wrap;
+    height: 60px;
+    flex-wrap: nowrap;
+    padding-top: 0;
+    padding-bottom: 0;
   }
   .hero {
     padding: 70px 20px 60px;
