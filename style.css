@@ -450,14 +450,16 @@ nav {
   line-height: 1.75;
 }
 
-.legal-content ul {
+.legal-content ul,
+.legal-content ol {
   margin: 10px 0 16px 20px;
   color: var(--text-secondary);
   font-size: 15px;
   line-height: 1.75;
 }
 
-.legal-content ul li {
+.legal-content ul li,
+.legal-content ol li {
   margin-bottom: 6px;
 }
 
