@@ -98,12 +98,15 @@
     loadEvents();
   }
   $('bz-send').addEventListener('click', async function () {
-    var email = $('bz-email').value.trim();
-    if (!email) { msg('bz-auth-msg', 'Please enter your email.', 'err'); return; }
-    this.disabled = true; this.textContent = 'Logging in…';
-    var res = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: window.location.origin + '/business/events/' } });
-    this.disabled = false; this.textContent = 'Login';
-    msg('bz-auth-msg', res.error ? ('Error: ' + res.error.message) : 'Check your inbox and click the link.', res.error ? 'err' : 'ok');
+    this.disabled = true; this.textContent = 'Opening Google...';
+    var res = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/business/events/' }
+    });
+    if (res.error) {
+      this.disabled = false; this.textContent = 'Continue with Google';
+      msg('bz-auth-msg', 'Error: ' + res.error.message, 'err');
+    }
   });
   $('bz-signout').addEventListener('click', async function (e) { e.preventDefault(); await sb.auth.signOut(); });
 

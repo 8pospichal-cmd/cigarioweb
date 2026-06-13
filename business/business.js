@@ -64,8 +64,8 @@
       history.pushState(null, '', '#bz-owner-login');
     }
     setTimeout(function () {
-      var email = $('bz-email');
-      if (email) email.focus();
+      var btn = $('bz-send');
+      if (btn) btn.focus();
     }, 80);
   }
   function closeAuthModal(clearHash) {
@@ -195,12 +195,15 @@
     }
   }
   $('bz-send').addEventListener('click', async function () {
-    var email = $('bz-email').value.trim();
-    if (!email) { msg('bz-auth-msg', 'Please enter your email.', 'err'); return; }
-    this.disabled = true; this.textContent = 'Logging in…';
-    var res = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: window.location.origin + '/business/' } });
-    this.disabled = false; this.textContent = 'Login';
-    msg('bz-auth-msg', res.error ? ('Error: ' + res.error.message) : 'Done! Check your inbox and click the sign-in link.', res.error ? 'err' : 'ok');
+    this.disabled = true; this.textContent = 'Opening Google...';
+    var res = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/business/' }
+    });
+    if (res.error) {
+      this.disabled = false; this.textContent = 'Continue with Google';
+      msg('bz-auth-msg', 'Error: ' + res.error.message, 'err');
+    }
   });
   $('bz-signout').addEventListener('click', async function (e) { e.preventDefault(); await sb.auth.signOut(); });
 
