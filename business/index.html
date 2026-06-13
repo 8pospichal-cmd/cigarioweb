@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="noindex" />
+  <title>Cigario Business — Manage your venue</title>
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="/business/business.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+  <div class="bz-top">
+    <div class="bz-top-inner">
+      <a href="/business/" class="bz-logo">Cigario<span>Business</span></a>
+      <div class="bz-top-right">
+        <nav class="bz-public-nav bz-public-link" aria-label="Business page sections">
+          <a href="/">Cigario app</a>
+        </nav>
+        <a href="#bz-owner-login" class="bz-login-link bz-public-link" data-auth-modal>Login</a>
+        <nav class="bz-nav hidden" id="bz-nav">
+          <a href="/business/" class="bz-tab active">My venues</a>
+          <a href="/business/events/" class="bz-tab">Events</a>
+          <a href="/business/admin/" class="bz-tab bz-tab-admin hidden">Admin</a>
+        </nav>
+        <div class="bz-profile-menu hidden" id="bz-profile-menu">
+          <button class="bz-profile-button" id="bz-profile-button" type="button" aria-expanded="false" aria-controls="bz-profile-dropdown">Profile</button>
+          <div class="bz-profile-dropdown hidden" id="bz-profile-dropdown">
+            <span id="bz-userline" class="bz-profile-email"></span>
+            <a href="#" id="bz-signout" class="bz-profile-signout">Sign out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Logged-in side rail ── -->
+  <aside id="bz-sidebar" class="bz-sidebar hidden" aria-label="Owner navigation">
+    <nav class="bz-side-nav">
+      <a href="/business/" class="bz-side-link active">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>
+        <span>My venues</span>
+      </a>
+      <a href="/business/events/" class="bz-side-link">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></svg>
+        <span>Events</span>
+      </a>
+      <span class="bz-side-link locked" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h9l3 3v13H6z"/><path d="M9 4v5h6"/></svg>
+        <span>Reservations</span>
+        <em class="bz-side-soon">Soon</em>
+      </span>
+      <span class="bz-side-link locked" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        <span>Statistics</span>
+        <em class="bz-side-soon">Soon</em>
+      </span>
+      <span class="bz-side-link locked" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4 2.5 5 5.5.8-4 3.9.9 5.5L12 17l-4.9 2.6.9-5.5-4-3.9 5.5-.8z"/></svg>
+        <span>Reviews</span>
+        <em class="bz-side-soon">Soon</em>
+      </span>
+      <span class="bz-side-link locked" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M17.5 20c0-2.3-1-4-2.5-4.6"/></svg>
+        <span>Users</span>
+        <em class="bz-side-soon">Soon</em>
+      </span>
+      <a href="/business/admin/" class="bz-side-link bz-tab-admin hidden">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.2 3 7.7 7 9 4-1.3 7-4.8 7-9V6z"/></svg>
+        <span>Admin</span>
+      </a>
+    </nav>
+
+    <div class="bz-side-download">
+      <p class="bz-side-download-title">Cigario App</p>
+      <p class="bz-side-download-sub">Download and try the app on your phone.</p>
+      <div class="bz-side-stores">
+        <a href="https://apps.apple.com/app/cigario/id6762789713" class="store-btn" target="_blank" rel="noopener" aria-label="Download on the App Store">
+          <svg class="store-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+          <div class="store-btn-text">
+            <span class="store-label">Download on the</span>
+            <span class="store-name">App Store</span>
+          </div>
+        </a>
+        <a href="#" class="store-btn store-btn-soon" aria-label="Google Play — coming soon">
+          <svg class="store-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true">
+            <path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12 3.84 21.85C3.34 21.61 3 21.09 3 20.5zm13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27zm3.35-4.31c.34.27.59.69.59 1.19s-.22.9-.57 1.18l-2.29 1.32-2.5-2.5 2.5-2.5 2.27 1.31zM6.05 2.66l10.76 6.22-2.27 2.27-8.49-8.49z"/>
+          </svg>
+          <div class="store-btn-text">
+            <span class="store-label">Coming soon to</span>
+            <span class="store-name">Google Play</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Sign in ── -->
+  <div id="bz-auth" class="bz-auth hidden">
+    <section class="bz-hero">
+      <div class="bz-hero-copy">
+        <p class="bz-eyebrow">For premium cigar venues</p>
+        <h1 class="bz-hero-title">Bring your lounge into the Cigario map.</h1>
+        <p class="bz-hero-sub">Cigario helps adult cigar lovers discover verified lounges, bars, chateaux, hotels and private cigar-friendly places worth visiting.</p>
+        <div class="bz-hero-actions">
+          <a class="bz-btn" href="#bz-owner-login" data-auth-modal>Add your venue</a>
+          <a class="bz-btn bz-btn-ghost" href="#how-it-works">How it works</a>
+        </div>
+        <div class="bz-hero-stats">
+          <div class="bz-hero-stat">
+            <span class="bz-hero-stars" aria-hidden="true">★★★★★</span>
+            <span class="bz-hero-stat-text"><strong>4.9</strong> rating</span>
+          </div>
+          <span class="bz-hero-stat-div" aria-hidden="true"></span>
+          <div class="bz-hero-stat">
+            <span class="bz-hero-stat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M17.5 20c0-2.3-1-4-2.5-4.6"/></svg></span>
+            <span class="bz-hero-stat-text"><strong>1,200+</strong> global users</span>
+          </div>
+        </div>
+        <div class="bz-proof-row">
+          <span>Global map</span>
+          <span>iOS + Android</span>
+          <span>4.9 rated</span>
+        </div>
+      </div>
+      <div class="bz-hero-visual" aria-hidden="true">
+        <div class="bz-hero-stage">
+          <div class="bz-phone-wrap" data-depth="6">
+            <div class="bz-phone">
+              <span class="bz-phone-speaker"></span>
+              <div class="bz-phone-screen">
+                <div class="bz-phone-map">
+                  <svg class="bz-phone-streets" viewBox="0 0 120 250" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <g fill="none" stroke="rgba(255,255,255,.06)" stroke-width="2" stroke-linecap="round">
+                      <path d="M-10 64 H130"/><path d="M-10 150 H130"/>
+                      <path d="M30 -10 V260"/><path d="M86 -10 V260"/>
+                      <path d="M-10 210 L130 120"/><path d="M-10 24 L130 104"/>
+                    </g>
+                    <circle cx="70" cy="80" r="34" fill="none" stroke="rgba(232,201,106,.16)" stroke-width="1.4"/>
+                    <circle cx="70" cy="80" r="20" fill="none" stroke="rgba(232,201,106,.10)" stroke-width="1.2"/>
+                  </svg>
+                  <span class="bz-phone-dot bz-phone-dot--a"></span>
+                  <span class="bz-phone-dot bz-phone-dot--b"></span>
+                  <span class="bz-phone-dot bz-phone-dot--c"></span>
+                  <span class="bz-phone-dot bz-phone-dot--d"></span>
+                  <span class="bz-phone-dot bz-phone-dot--e"></span>
+                  <span class="bz-phone-dot bz-phone-dot--gold"></span>
+                  <span class="bz-phone-pin">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c-3.9 0-7 3-7 6.8 0 4.9 5.7 11 6.4 11.7a.8.8 0 0 0 1.2 0C13.3 20.3 19 14.2 19 9.3c0-3.8-3.1-6.8-7-6.8Z"/><circle cx="12" cy="9.2" r="2.4"/></svg>
+                  </span>
+                </div>
+                <div class="bz-phone-sheet">
+                  <div class="bz-phone-card">
+                    <div class="bz-phone-card-photo" style="background-image:url('/assets/zamek.jpeg')"></div>
+                    <div class="bz-phone-card-body">
+                      <div class="bz-phone-card-row">
+                        <strong>Havana Lounge</strong>
+                        <span class="bz-phone-verified" title="Cigario Verified">
+                          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.6 16.2 5.4 12l-1.4 1.4 5.6 5.6 12-12-1.4-1.4z"/></svg>
+                        </span>
+                      </div>
+                      <span class="bz-phone-card-meta">Lounge · Prague · Open now</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bz-float bz-float--verified bz-float--lg" data-depth="28">
+            <div class="bz-float-card">
+              <span class="bz-float-ico"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.2 3 7.7 7 9 4-1.3 7-4.8 7-9V6z"/><path d="m9 12 2 2 4-4.4"/></svg></span>
+              <span class="bz-float-txt"><strong>Verified</strong><small>by Cigario</small></span>
+            </div>
+          </div>
+          <div class="bz-float bz-float--rating" data-depth="40">
+            <div class="bz-float-card">
+              <span class="bz-float-ico bz-float-ico--star"><svg viewBox="0 0 24 24"><path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 21.6 6.6 19.5l1.2-6-4.5-4.2 6.1-.7z"/></svg></span>
+              <span class="bz-float-txt"><strong>4.9</strong><small>User rating</small></span>
+            </div>
+          </div>
+          <div class="bz-float bz-float--places" data-depth="18">
+            <div class="bz-float-card">
+              <span class="bz-float-ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M17.5 20c0-2.3-1-4-2.5-4.6"/></svg></span>
+              <span class="bz-float-txt"><strong>1,200+</strong><small>Global users</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bz-business-section" id="benefits">
+      <div class="bz-growth-section">
+        <div class="bz-growth-copy">
+          <div class="bz-growth-net" aria-hidden="true"></div>
+          <div class="bz-growth-main">
+            <p class="bz-eyebrow">For premium venues</p>
+            <h2>Join the cigar network while it is being built.</h2>
+            <p>Cigario is becoming the social network for cigar enthusiasts around the world — a place where the community discovers premium venues, shares experiences and decides where to meet next. Joining early means your venue becomes part of that map from the beginning.</p>
+            <div class="bz-growth-actions">
+              <a class="bz-btn" href="#bz-owner-login" data-auth-modal>Join Cigario Business</a>
+              <a class="bz-growth-link" href="#bz-owner-login" data-auth-modal>See what you get <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <aside class="bz-growth-perks" aria-label="Early partner access">
+            <p class="bz-growth-perks-head"><span class="bz-growth-perks-dot" aria-hidden="true"></span>Early partner access</p>
+            <ul>
+              <li><strong>Founding venue</strong><span>Be among the first places on the Cigario map.</span></li>
+              <li><strong>City priority</strong><span>Early venues get the spotlight as we launch each city.</span></li>
+              <li><strong>Direct line</strong><span>Talk to the team about events and verification.</span></li>
+            </ul>
+            <p class="bz-growth-perks-foot">Limited early access · 2026</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="bz-business-section" id="how-it-works">
+      <div class="bz-section-head">
+        <p class="bz-eyebrow">Before you join</p>
+        <h2>Clear benefits. Clear limits.</h2>
+        <p>No inflated promises. Cigario is useful when the venue is real, cigar-friendly and worth showing to the community.</p>
+      </div>
+      <div class="bz-compare-grid">
+        <article class="bz-compare-card bz-compare-card-good">
+          <p class="bz-compare-label">What you get</p>
+          <h3>A proper place in Cigario.</h3>
+          <ul>
+            <li>Your place will become part of the Cigar Community app.</li>
+            <li>Photos, map pin, opening hours, website and smoking details in one clean profile.</li>
+            <li>People who already care about cigars can discover where to go.</li>
+            <li>You can update the listing when details change.</li>
+            <li>Approved venues can later use events and request Cigario Verified.</li>
+          </ul>
+        </article>
+
+        <article class="bz-compare-card bz-compare-card-limit">
+          <p class="bz-compare-label">What this is not</p>
+          <h3>No fake promise, no automatic listing.</h3>
+          <ul>
+            <li>Not paid placement. Approval is not guaranteed.</li>
+            <li>Not a tobacco marketplace or sales channel.</li>
+            <li>Not a replacement for your website, booking system or social media.</li>
+            <li>Not instant if the listing is incomplete or unclear.</li>
+            <li>Not for places where cigar smoking is not actually welcome.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="bz-business-section" id="verified">
+      <div class="bz-growth-spotlight" aria-label="Cigario Verified">
+        <div class="bz-growth-spotlight-photo" aria-hidden="true"></div>
+        <div class="bz-growth-spotlight-copy">
+          <span class="bz-verified-seal">
+            <span class="bz-verified-shield" aria-hidden="true">
+              <svg viewBox="0 0 48 52" width="40" height="44">
+                <defs><linearGradient id="bzShieldGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2DA86"/><stop offset="1" stop-color="#B98E32"/></linearGradient></defs>
+                <path d="M24 3.5 L42.5 9 V25.5 C42.5 38 34 46 24 49.5 C14 46 5.5 38 5.5 25.5 V9 Z" fill="rgba(12,12,18,.62)" stroke="url(#bzShieldGold)" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M16.5 25.6 l4.8 4.8 9.3-10.4" fill="none" stroke="url(#bzShieldGold)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="bz-verified-seal-text">Cigario Verified</span>
+          </span>
+          <strong>For places that deserve to be recommended.</strong>
+          <p>Selected venues can request a Cigario visit and future verification. Verified places stand out as curated destinations for the community.</p>
+          <p class="bz-verified-note">Awarded after a physical visit — never automatic, never for sale.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bz-footer bz-public-footer">
+      <ul class="bz-footer-main-links">
+        <li><a href="/privacy/">Privacy Policy</a></li>
+        <li><a href="/terms/">Terms of Service</a></li>
+        <li><a href="/support/">Support</a></li>
+        <li><a href="/">Cigario app</a></li>
+        <li><a href="/cs/">Česky</a></li>
+        <li><a href="mailto:cigarioapp@gmail.com">cigarioapp@gmail.com</a></li>
+      </ul>
+      <p class="bz-footer-copy">
+        © 2025 Daniel Pospíchal · Company ID: 19079583 · Havlíčkův Brod, Czech Republic<br />
+        Cigario Business — All rights reserved
+      </p>
+    </footer>
+  </div>
+
+  <div class="bz-auth-modal hidden" id="bz-auth-modal" role="dialog" aria-modal="true" aria-labelledby="bz-auth-modal-title">
+    <button class="bz-auth-modal-backdrop" type="button" data-auth-close aria-label="Close login"></button>
+    <div class="bz-card bz-auth-card bz-auth-modal-card">
+      <div class="bz-auth-card-top">
+        <p class="bz-section-label">Owner sign-in</p>
+        <div class="bz-auth-modal-controls">
+          <span class="bz-secured-badge" aria-label="Secure login" title="Secure login">
+            <svg class="bz-secured-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="5.75" y="10.25" width="12.5" height="9" rx="2.25"></rect>
+              <path d="M8.75 10.25V8a3.25 3.25 0 0 1 6.5 0v2.25"></path>
+            </svg>
+          </span>
+          <button class="bz-modal-close" type="button" data-auth-close aria-label="Close login">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+      </div>
+      <h2 class="bz-card-title" id="bz-auth-modal-title">Enter your email</h2>
+      <p class="bz-sub">We'll send you a secure magic link. No password needed.</p>
+      <div class="bz-field">
+        <label class="bz-label" for="bz-email">Email</label>
+        <input class="bz-input" id="bz-email" type="email" placeholder="you@email.com" autocomplete="email" />
+      </div>
+      <div class="bz-auth-actions">
+        <button class="bz-btn bz-login-submit" id="bz-send">Login</button>
+      </div>
+      <div class="bz-msg" id="bz-auth-msg"></div>
+      <p class="bz-hint">First time here? Your account is created automatically.</p>
+    </div>
+  </div>
+
+  <!-- ── Dashboard ── -->
+  <div id="bz-dash" class="bz-wrap hidden">
+    <div class="bz-page-head">
+      <div>
+        <p class="bz-eyebrow">Owner portal</p>
+        <h1 class="bz-h1">My venues</h1>
+        <p class="bz-sub">Add and manage your venues. Once approved, they appear in the Cigario app.</p>
+      </div>
+      <button class="bz-btn" id="bz-add">Add venue</button>
+    </div>
+    <div class="bz-stats" id="bz-dashboard-stats">
+      <div class="bz-stat">
+        <div class="bz-stat-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>
+        </div>
+        <div class="bz-stat-main">
+          <span class="bz-stat-num" id="bz-stat-total">0</span>
+          <p class="bz-stat-label">Total venues</p>
+          <span class="bz-stat-note" id="bz-stat-total-note"></span>
+        </div>
+      </div>
+      <div class="bz-stat">
+        <div class="bz-stat-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+        </div>
+        <div class="bz-stat-main">
+          <span class="bz-stat-num" id="bz-stat-pending">0</span>
+          <p class="bz-stat-label">Pending review</p>
+          <span class="bz-stat-note" id="bz-stat-pending-note"></span>
+        </div>
+      </div>
+      <div class="bz-stat">
+        <div class="bz-stat-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+        </div>
+        <div class="bz-stat-main">
+          <span class="bz-stat-num" id="bz-stat-approved">0</span>
+          <p class="bz-stat-label">Live in app</p>
+          <span class="bz-stat-note" id="bz-stat-approved-note"></span>
+        </div>
+      </div>
+    </div>
+    <div id="bz-places"></div>
+
+    <section class="bz-dashboard-section">
+      <div class="bz-section-head bz-dashboard-section-head">
+        <p class="bz-eyebrow">Listing quality tips</p>
+        <h2>What makes a venue ready for review.</h2>
+        <p>Strong listings are specific, visual and honest. This helps Cigario keep the map useful for guests and fair for venues.</p>
+      </div>
+      <div class="bz-dashboard-grid">
+        <article class="bz-info-card">
+          <span>01</span>
+          <strong>Use real venue photos</strong>
+          <p>Upload sharp photos of the lounge, seating, humidor, terrace or smoking area. The first photo becomes the main image.</p>
+        </article>
+        <article class="bz-info-card">
+          <span>02</span>
+          <strong>Explain cigar conditions</strong>
+          <p>Tell guests where they can smoke, whether they can bring their own cigars, and what drinks or cigars you offer.</p>
+        </article>
+        <article class="bz-info-card">
+          <span>03</span>
+          <strong>Check the map pin</strong>
+          <p>Use the address search, then confirm the marker manually. A correct pin makes the place easier to find in the app.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="bz-verified-panel">
+      <div>
+        <p class="bz-eyebrow">Cigario Verified</p>
+        <h2>Verified by Cigario is reserved for exceptional places.</h2>
+        <p>Cigario Verified is not automatic. It is awarded only to selected premium venues that we physically visit, evaluate and approve. Think of it as a curated mark for places that genuinely belong on a cigar lover's shortlist.</p>
+      </div>
+      <div class="bz-verified-card">
+        <div class="bz-verified-image" aria-hidden="true">
+          <span class="bz-verified-mark">Verified by Cigario</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="bz-dashboard-section">
+      <div class="bz-dashboard-grid">
+        <article class="bz-info-card">
+          <span>Review</span>
+          <strong>How approval works</strong>
+          <p>After you submit a venue, Cigario checks the photos, text, location and smoking confirmation before it appears in the mobile app.</p>
+        </article>
+        <article class="bz-info-card">
+          <span>Status</span>
+          <strong>Changes requested</strong>
+          <p>If something needs improvement, the venue returns to your dashboard with a note. Edit it and submit again for review.</p>
+        </article>
+        <article class="bz-info-card">
+          <span>Help</span>
+          <strong>Need help?</strong>
+          <p>For questions about listings, verification or owner access, contact us at <a href="mailto:cigarioapp@gmail.com">cigarioapp@gmail.com</a>.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer class="bz-footer">
+      <div>
+        <a href="/business/" class="bz-logo">Cigario <span>Business</span></a>
+        <p>Cigario is the owner of this directory and reserves the full right to edit or remove any listing at any time.</p>
+      </div>
+      <div class="bz-footer-links">
+        <a href="/">Website</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/support/">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ── Venue form ── -->
+  <div id="bz-form" class="bz-wrap hidden">
+    <h1 class="bz-h1" id="bz-form-title">New venue</h1>
+    <p class="bz-sub" id="bz-form-sub">Fill in everything, add 4 photos, and submit. We'll review it before it goes live.</p>
+    <div class="bz-form-layout">
+      <aside class="bz-card bz-checklist-card">
+        <div class="bz-checklist-head">
+          <p class="bz-section-label">Before submit</p>
+          <span id="bz-autosave-status">Draft not saved yet</span>
+        </div>
+        <div class="bz-checklist" id="bz-checklist">
+          <div class="bz-checkitem" data-check="basic"><span></span><p>Basic details</p></div>
+          <div class="bz-checkitem" data-check="location"><span></span><p>Map location</p></div>
+          <div class="bz-checkitem" data-check="description"><span></span><p>Venue description</p></div>
+          <div class="bz-checkitem" data-check="hours"><span></span><p>Opening hours</p></div>
+          <div class="bz-checkitem" data-check="photos"><span></span><p>4 photos uploaded</p></div>
+          <div class="bz-checkitem" data-check="confirm"><span></span><p>Smoking confirmation</p></div>
+        </div>
+        <p class="bz-hint">Your progress is saved locally in this browser while you work.</p>
+      </aside>
+
+    <div class="bz-form-main">
+    <div class="bz-card">
+      <div class="bz-field">
+        <label class="bz-label">Venue name <span class="bz-req">*</span></label>
+        <input class="bz-input" id="f-name" type="text" placeholder="e.g. The Cigar Lounge" />
+      </div>
+      <div class="bz-row">
+        <div class="bz-field">
+          <label class="bz-label">Type <span class="bz-req">*</span></label>
+          <select class="bz-select" id="f-type">
+            <option value="lounge">Lounge</option>
+            <option value="bar">Bar</option>
+            <option value="shop">Shop</option>
+            <option value="restaurant">Restaurant</option>
+            <option value="outdoor">Outdoor</option>
+          </select>
+        </div>
+        <div class="bz-field">
+          <label class="bz-label">City <span class="bz-req">*</span></label>
+          <input class="bz-input" id="f-city" type="text" placeholder="Prague" />
+        </div>
+      </div>
+      <div class="bz-field">
+        <label class="bz-label">Address <span class="bz-req">*</span></label>
+        <div class="bz-row">
+          <input class="bz-input" id="f-address" type="text" placeholder="Street and number" />
+          <button class="bz-btn bz-btn-ghost" id="f-locate" style="flex:0 0 auto">Find on map</button>
+        </div>
+        <div class="bz-hint">Enter the full venue address and city. Search is powered by OpenStreetMap, so always check the pin and drag it if needed.</div>
+        <div id="bz-map"></div>
+      </div>
+      <div class="bz-field">
+        <label class="bz-label">Website</label>
+        <input class="bz-input" id="f-web" type="url" placeholder="https://…" />
+        <div class="bz-hint">Prefer a page that mentions cigars, smoking, lounge rules or reservations. If you don't have one, use your main website.</div>
+      </div>
+    </div>
+
+    <!-- Three questions -->
+    <div class="bz-card">
+      <p class="bz-section-label">Tell us about your venue</p>
+      <div class="bz-field">
+        <label class="bz-label">1. Tell us about your place. What is the style? How many seating places do you have? The vibe. <span class="bz-req">*</span></label>
+        <textarea class="bz-textarea" id="f-q1" placeholder="Example: Our lounge has a warm private-club atmosphere with leather chairs, quiet lighting and around 28 comfortable seats. The space is designed for slow evenings, business meetings and relaxed conversations over cigars and drinks."></textarea>
+      </div>
+      <div class="bz-field">
+        <label class="bz-label">2. Under which conditions can people smoke cigars? <span class="bz-req">*</span></label>
+        <textarea class="bz-textarea" id="f-q2" placeholder="Example: Guests can smoke cigars in the lounge area throughout opening hours. You may bring your own cigar with a cutting fee, or choose from our humidor with Dominican, Cuban and Nicaraguan cigars. We also serve rum, whisky, cocktails and coffee selected to pair with cigars."></textarea>
+      </div>
+      <div class="bz-field" style="margin-bottom:0">
+        <label class="bz-label">3. What else should we know about this place? <span class="bz-req">*</span></label>
+        <textarea class="bz-textarea" id="f-q3" placeholder="Example: Reservations are recommended on weekends. Private tastings are available on request, and members can use personal cigar lockers. Smart casual dress is preferred, parking is nearby, and the terrace is open during warmer months."></textarea>
+      </div>
+    </div>
+
+    <!-- Opening hours -->
+    <div class="bz-card">
+      <div class="bz-hours-head">
+        <p class="bz-section-label" style="margin:0">Opening hours</p>
+        <button class="bz-btn bz-btn-ghost bz-btn-sm" id="f-sync">Sync Monday to all</button>
+      </div>
+      <div id="f-hours"></div>
+    </div>
+
+    <!-- Photos -->
+    <div class="bz-card">
+      <p class="bz-section-label">Photos — 4 required <span class="bz-req">*</span></p>
+      <p class="bz-hint" style="margin-bottom:12px">The first photo becomes the main venue image in Cigario. Upload the strongest exterior or interior photo first.</p>
+      <div class="bz-slots" id="bz-slots"></div>
+      <div class="bz-hint">Tap each slot to add a photo. All four are required.</div>
+    </div>
+
+    <!-- Confirm -->
+    <div class="bz-card">
+      <label class="bz-check">
+        <input type="checkbox" id="f-confirm" />
+        <span>I confirm that smoking is permitted at this venue and that I'm authorised to manage this listing. <span class="bz-req">*</span></span>
+      </label>
+    </div>
+
+    <div class="bz-msg" id="bz-form-msg"></div>
+    <div class="bz-actions">
+      <button class="bz-btn" id="f-save">Save &amp; submit for review</button>
+      <button class="bz-btn bz-btn-ghost" id="f-cancel">Back</button>
+      <button class="bz-btn bz-btn-danger hidden" id="f-delete" style="margin-left:auto">Delete venue</button>
+    </div>
+    <p class="bz-owner-note">Cigario is the owner of this directory and reserves the full right to edit or remove any listing at any time.</p>
+    </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/business/config.js"></script>
+  <script src="/business/business.js"></script>
+  <script src="/business/motion.js"></script>
+</body>
+</html>

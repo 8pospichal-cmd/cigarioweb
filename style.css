@@ -94,6 +94,27 @@ nav {
   text-decoration: none;
 }
 
+.nav-links a.nav-business-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  margin-top: -7px;
+  border: 1px solid rgba(201,168,76,0.34);
+  border-radius: 999px;
+  background: rgba(201,168,76,0.08);
+  color: var(--gold-light);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease, color 0.16s ease;
+}
+
+.nav-links a.nav-business-link:hover {
+  background: rgba(201,168,76,0.14);
+  border-color: rgba(232,201,106,0.48);
+  color: var(--gold-light);
+  transform: translateY(-1px);
+}
+
 .lang-switch {
   display: inline-flex;
   align-items: center;
@@ -590,9 +611,26 @@ nav {
 
 /* ── Legal pages ── */
 .legal-header {
+  position: relative;
   text-align: center;
   padding: 80px 24px 60px;
   border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.legal-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(480px 220px at 50% 0%, rgba(201,168,76,0.12), transparent 70%),
+    radial-gradient(520px 260px at 12% 40%, rgba(255,255,255,0.035), transparent 70%);
+}
+
+.legal-header > * {
+  position: relative;
+  z-index: 1;
 }
 
 .legal-header .hero-badge {
@@ -614,7 +652,7 @@ nav {
 .legal-content {
   max-width: 720px;
   margin: 0 auto;
-  padding: 60px 24px 100px;
+  padding: 56px 24px 96px;
 }
 
 .legal-content h2 {
@@ -661,12 +699,22 @@ nav {
 }
 
 .info-box {
-  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
   border: 1px solid var(--border);
   border-left: 3px solid var(--gold);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 16px 20px;
   margin: 20px 0;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.20);
+  transition: transform 0.26s ease, border-color 0.26s ease, box-shadow 0.26s ease, background 0.26s ease;
+}
+
+.info-box:hover {
+  transform: translateY(-3px);
+  border-color: rgba(201,168,76,0.28);
+  box-shadow: 0 22px 46px rgba(0,0,0,0.28), 0 0 26px rgba(201,168,76,0.06);
 }
 
 .info-box p {
@@ -1011,11 +1059,41 @@ footer {
 }
 
 .support-card {
-  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.065), rgba(255,255,255,0.03));
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 28px 24px;
   text-align: center;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.22);
+  transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease, background 0.32s ease;
+}
+
+.support-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(201,168,76,0.10), transparent 62%);
+  opacity: 0;
+  transition: opacity 0.32s ease;
+  pointer-events: none;
+}
+
+.support-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201,168,76,0.32);
+  background: linear-gradient(180deg, rgba(255,255,255,0.085), rgba(255,255,255,0.038));
+  box-shadow: 0 26px 58px rgba(201,168,76,0.10), 0 8px 28px rgba(0,0,0,0.42);
+}
+
+.support-card:hover::after {
+  opacity: 1;
+}
+
+.support-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .support-card .icon {
@@ -1385,6 +1463,11 @@ footer {
 .nav-dropdown-item:active {
   color: var(--gold);
   text-decoration: none;
+}
+
+.nav-dropdown-business {
+  color: var(--gold-light);
+  background: rgba(201,168,76,0.07);
 }
 
 .nav-dropdown-lang {
