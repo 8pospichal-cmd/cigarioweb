@@ -4,6 +4,7 @@
   var TYPE_LABELS = { lounge: 'Lounge', bar: 'Bar', shop: 'Shop', restaurant: 'Restaurant', outdoor: 'Outdoor' };
   var STATUS_LABELS = { approved: 'Approved', pending: 'Pending', draft: 'Draft', hidden: 'Changes requested' };
   var REC_LABELS = { none: 'One-off', weekly: 'Every week', biweekly: 'Every 2 weeks', monthly: 'Every month' };
+  var ADMIN_PHOTO_SLOTS = 4;
   var user = null, isAdmin = false, filter = 'pending', query = '', rowsCache = [], mode = 'venues', eventFilter = 'live';
   var adminMap = null, adminMarkers = null, mapReady = false, adminMapHasInitialView = false;
   function fmtDate(s) {
@@ -197,13 +198,13 @@
   function focusVenue(id) {
     var el = document.querySelector('[data-place-id="' + id + '"]');
     if (!el) return;
+    var scrollX = window.pageXOffset;
+    var scrollY = window.pageYOffset;
     var list = $('bz-list');
     if (list && list.firstElementChild !== el) {
       list.insertBefore(el, list.firstElementChild);
     }
-    var offset = 112;
-    var top = el.getBoundingClientRect().top + window.pageYOffset - offset;
-    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    window.scrollTo(scrollX, scrollY);
     el.classList.add('bz-card-focus');
     setTimeout(function () { el.classList.remove('bz-card-focus'); }, 2600);
   }
@@ -275,6 +276,72 @@
     if (res.error) { alert('Error: ' + res.error.message); return; } load();
   }
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function resizeImage(file, maxSize) {
+    return new Promise(function (resolve) {
+      var img = new Image();
+      img.onload = function () {
+        var w = img.width, h = img.height;
+        if (Math.max(w, h) > maxSize) { var scale = maxSize / Math.max(w, h); w = Math.round(w * scale); h = Math.round(h * scale); }
+        var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(function (blob) { resolve(blob); }, 'image/jpeg', 0.85);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  }
+  function adminPhotosFromPlace(p) {
+    var gallery = [].concat(p.gallery_urls || []).filter(Boolean);
+    if (p.photo_url && gallery.indexOf(p.photo_url) === -1) gallery.unshift(p.photo_url);
+    return gallery.slice(0, ADMIN_PHOTO_SLOTS).concat([null, null, null, null]).slice(0, ADMIN_PHOTO_SLOTS);
+  }
+  function renderAdminPhotos(form) {
+    var wrap = form.querySelector('.e-photo-slots');
+    if (!wrap) return;
+    var photos = form._adminPhotos || [];
+    wrap.innerHTML = '';
+    for (var i = 0; i < ADMIN_PHOTO_SLOTS; i++) {
+      (function (i) {
+        var slot = document.createElement('button');
+        slot.type = 'button';
+        slot.className = 'bz-slot bz-admin-photo-slot' + (photos[i] ? ' filled' : '');
+        if (photos[i]) {
+          slot.innerHTML = '<img src="' + photos[i] + '" alt=""><span class="bz-admin-main-photo">' + (i === 0 ? 'Main photo' : 'Photo ' + (i + 1)) + '</span><button class="bz-slot-del" type="button" title="Remove">×</button>';
+          slot.querySelector('.bz-slot-del').addEventListener('click', function (e) {
+            e.stopPropagation();
+            form._adminPhotos[i] = null;
+            renderAdminPhotos(form);
+          });
+        } else {
+          slot.innerHTML = '<span class="bz-slot-plus">+</span><span class="bz-slot-label">' + (i === 0 ? 'Main photo' : 'Photo ' + (i + 1)) + '</span>';
+        }
+        slot.addEventListener('click', function () { pickAdminPhoto(form, i); });
+        wrap.appendChild(slot);
+      })(i);
+    }
+  }
+  function pickAdminPhoto(form, slotIndex) {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.addEventListener('change', async function () {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      var slot = form.querySelectorAll('.e-photo-slots .bz-slot')[slotIndex];
+      if (slot) slot.classList.add('uploading');
+      try {
+        var blob = await resizeImage(file, 1600);
+        var path = user.id + '/admin-' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.jpg';
+        var up = await sb.storage.from('place-photos').upload(path, blob, { contentType: 'image/jpeg' });
+        if (up.error) { inlineMsg(form, 'Upload error: ' + up.error.message, 'err'); return; }
+        form._adminPhotos[slotIndex] = sb.storage.from('place-photos').getPublicUrl(path).data.publicUrl;
+        inlineMsg(form, 'Photo uploaded. Save admin edits to apply it.', 'ok');
+      } catch (e) {
+        inlineMsg(form, 'Could not process the image.', 'err');
+      }
+      renderAdminPhotos(form);
+    });
+    input.click();
+  }
 
   function card(p) {
     var el = document.createElement('div'); el.className = 'bz-card'; el.setAttribute('data-place-id', p.id);
@@ -429,6 +496,7 @@
       '<div class="bz-field"><label class="bz-label">Website</label><input class="bz-input e-web" type="url"></div>' +
       '<div class="bz-field"><label class="bz-label">Description — Czech / original</label><textarea class="bz-textarea e-description"></textarea></div>' +
       '<div class="bz-field"><label class="bz-label">Description — English</label><textarea class="bz-textarea e-description-en" placeholder="English text shown to non-Czech users"></textarea></div>' +
+      '<div class="bz-field"><label class="bz-label">Photos</label><div class="bz-admin-photo-note">The first slot is used as the main listing photo.</div><div class="bz-slots e-photo-slots"></div></div>' +
       '<div class="bz-msg e-msg"></div>' +
       '<div class="bz-actions">' +
         '<button class="bz-btn bz-btn-sm e-save">Save admin edits</button>' +
@@ -441,6 +509,8 @@
     form.querySelector('.e-web').value = p.website_url || '';
     form.querySelector('.e-description').value = p.description || '';
     form.querySelector('.e-description-en').value = p.description_en || '';
+    form._adminPhotos = adminPhotosFromPlace(p);
+    renderAdminPhotos(form);
     form.querySelector('.e-cancel').addEventListener('click', function () { form.remove(); });
     form.querySelector('.e-save').addEventListener('click', function () { saveEdits(p.id, form, this); });
     cardEl.appendChild(form);
@@ -455,6 +525,8 @@
       website_url: form.querySelector('.e-web').value.trim() || null,
       description: form.querySelector('.e-description').value.trim(),
       description_en: form.querySelector('.e-description-en').value.trim() || null,
+      photo_url: (form._adminPhotos || []).filter(Boolean)[0] || null,
+      gallery_urls: (form._adminPhotos || []).filter(Boolean),
       moderated_at: new Date().toISOString()
     };
     if (!payload.name || !payload.city || !payload.address) {
