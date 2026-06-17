@@ -8,6 +8,7 @@
   <meta name="robots" content="noindex" />
   <title>Cigario Business — Admin</title>
   <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="/business/business.css" />
 </head>
 <body>
@@ -145,10 +146,21 @@
         <button class="bz-btn bz-btn-ghost bz-btn-sm" data-efilter="all">All</button>
       </div>
     </div>
+    <section class="bz-admin-map-card" id="bz-admin-map-card" aria-label="Venue map">
+      <div class="bz-admin-map-head">
+        <div>
+          <p class="bz-section-label">Map overview</p>
+          <h2>Venues by location</h2>
+        </div>
+        <p id="bz-admin-map-count">No venues on map</p>
+      </div>
+      <div id="bz-admin-map" class="bz-admin-map"></div>
+    </section>
     <div id="bz-list"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="/business/config.js"></script>
   <script src="/business/admin/admin.js"></script>
   <script src="/business/motion.js"></script>

@@ -5,6 +5,7 @@
   var STATUS_LABELS = { approved: 'Approved', pending: 'Pending', draft: 'Draft', hidden: 'Changes requested' };
   var REC_LABELS = { none: 'One-off', weekly: 'Every week', biweekly: 'Every 2 weeks', monthly: 'Every month' };
   var user = null, isAdmin = false, filter = 'pending', query = '', rowsCache = [], mode = 'venues', eventFilter = 'live';
+  var adminMap = null, adminMarkers = null, mapReady = false;
   function fmtDate(s) {
     if (!s) return '';
     return new Intl.DateTimeFormat('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(s));
@@ -42,7 +43,17 @@
     bindProfileMenu();
     var s = await sb.auth.getSession();
     await setUser(s.data.session ? s.data.session.user : null);
-    sb.auth.onAuthStateChange(function (_e, session) { setUser(session ? session.user : null); });
+    sb.auth.onAuthStateChange(function (_e, session) { handleAuthChange(session); });
+  }
+  function handleAuthChange(session) {
+    var nextUser = session ? session.user : null;
+    if (!nextUser) { setUser(null); return; }
+    if (user && user.id === nextUser.id) {
+      user = nextUser;
+      if ($('bz-userline')) $('bz-userline').textContent = user.email || '';
+      return;
+    }
+    setUser(nextUser);
   }
   async function setUser(u) {
     user = u;
@@ -81,6 +92,8 @@
       Array.prototype.forEach.call(document.querySelectorAll('[data-mode]'), function (x) { x.classList.toggle('bz-mode-active', x === b); });
       $('bz-venue-filters').classList.toggle('hidden', mode !== 'venues');
       $('bz-event-filters').classList.toggle('hidden', mode !== 'events');
+      var mapCard = $('bz-admin-map-card');
+      if (mapCard) mapCard.classList.toggle('hidden', mode !== 'venues');
       var s = $('bz-admin-search'); s.value = ''; query = '';
       s.placeholder = mode === 'events' ? 'Event title, venue...' : 'Venue, city, address, description...';
       load();
@@ -112,10 +125,88 @@
       return [p.name, p.type, p.city, p.address, p.description, p.website_url, p.owner_user_id]
         .filter(Boolean).join(' ').toLowerCase().indexOf(query) !== -1;
     });
-    if (!rows.length) { list.innerHTML = '<div class="bz-empty">Nothing here.</div>'; return; }
+    if (!rows.length) {
+      list.innerHTML = '<div class="bz-empty">Nothing here.</div>';
+      renderMapMarkers([]);
+      return;
+    }
     list.innerHTML = '';
     rows.forEach(function (p) { list.appendChild(card(p)); });
+    renderMapMarkers(rows);
   }
+
+  function initAdminMap() {
+    if (mapReady || !window.L || !$('bz-admin-map')) return;
+    adminMap = L.map('bz-admin-map', { scrollWheelZoom: false }).setView([50.08, 14.42], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(adminMap);
+    adminMarkers = L.layerGroup().addTo(adminMap);
+    mapReady = true;
+  }
+  function markerColor(status) {
+    if (status === 'approved') return '#7FCF8A';
+    if (status === 'hidden') return '#E8736A';
+    if (status === 'draft') return 'rgba(242,240,234,.55)';
+    return '#E8C96A';
+  }
+  function markerIcon(p) {
+    var color = markerColor(p.status || 'pending');
+    return L.divIcon({
+      className: 'bz-admin-map-pin-wrap',
+      html: '<span class="bz-admin-map-pin" style="--pin:' + color + '"></span>',
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+      popupAnchor: [0, -12]
+    });
+  }
+  function renderMapMarkers(rows) {
+    var card = $('bz-admin-map-card');
+    if (card) card.classList.toggle('hidden', mode !== 'venues');
+    if (mode !== 'venues') return;
+    initAdminMap();
+    if (!mapReady) {
+      if (card) card.classList.add('hidden');
+      return;
+    }
+    adminMarkers.clearLayers();
+    var bounds = [];
+    var mapped = rows.filter(function (p) {
+      return p.latitude != null && p.longitude != null && !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude));
+    });
+    mapped.forEach(function (p) {
+      var lat = parseFloat(p.latitude), lng = parseFloat(p.longitude);
+      bounds.push([lat, lng]);
+      var m = L.marker([lat, lng], { icon: markerIcon(p), title: p.name || 'Venue' });
+      m.bindPopup(
+        '<strong>' + escapeHtml(p.name || 'Venue') + '</strong>' +
+        '<span>' + escapeHtml([TYPE_LABELS[p.type] || p.type, p.city].filter(Boolean).join(' · ')) + '</span>' +
+        '<button type="button" class="bz-map-popup-action" data-place-id="' + p.id + '">Show in list</button>'
+      );
+      m.on('click', function () { focusVenue(p.id); });
+      adminMarkers.addLayer(m);
+    });
+    if ($('bz-admin-map-count')) {
+      $('bz-admin-map-count').textContent = mapped.length
+        ? mapped.length + ' of ' + rows.length + ' venues shown'
+        : 'No venues with map pins';
+    }
+    if (bounds.length) adminMap.fitBounds(bounds, { padding: [34, 34], maxZoom: 13 });
+    else adminMap.setView([50.08, 14.42], 5);
+    setTimeout(function () { adminMap.invalidateSize(); }, 80);
+  }
+  function focusVenue(id) {
+    var el = document.querySelector('[data-place-id="' + id + '"]');
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.add('bz-card-focus');
+    setTimeout(function () { el.classList.remove('bz-card-focus'); }, 2600);
+  }
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.bz-map-popup-action');
+    if (btn) focusVenue(btn.getAttribute('data-place-id'));
+  });
 
   // ── Events moderation ──
   async function loadEvents() {
@@ -186,7 +277,7 @@
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   function card(p) {
-    var el = document.createElement('div'); el.className = 'bz-card';
+    var el = document.createElement('div'); el.className = 'bz-card'; el.setAttribute('data-place-id', p.id);
     var imgs = [].concat(p.gallery_urls || []).filter(Boolean).slice(0, 8)
       .map(function (u) { return '<div class="bz-slot filled" style="aspect-ratio:1"><img src="' + u + '" alt=""></div>'; }).join('');
     el.innerHTML =
@@ -336,7 +427,8 @@
         '<div class="bz-field"><label class="bz-label">Address</label><input class="bz-input e-address" type="text"></div>' +
       '</div>' +
       '<div class="bz-field"><label class="bz-label">Website</label><input class="bz-input e-web" type="url"></div>' +
-      '<div class="bz-field"><label class="bz-label">Description</label><textarea class="bz-textarea e-description"></textarea></div>' +
+      '<div class="bz-field"><label class="bz-label">Description — Czech / original</label><textarea class="bz-textarea e-description"></textarea></div>' +
+      '<div class="bz-field"><label class="bz-label">Description — English</label><textarea class="bz-textarea e-description-en" placeholder="English text shown to non-Czech users"></textarea></div>' +
       '<div class="bz-msg e-msg"></div>' +
       '<div class="bz-actions">' +
         '<button class="bz-btn bz-btn-sm e-save">Save admin edits</button>' +
@@ -348,6 +440,7 @@
     form.querySelector('.e-address').value = p.address || '';
     form.querySelector('.e-web').value = p.website_url || '';
     form.querySelector('.e-description').value = p.description || '';
+    form.querySelector('.e-description-en').value = p.description_en || '';
     form.querySelector('.e-cancel').addEventListener('click', function () { form.remove(); });
     form.querySelector('.e-save').addEventListener('click', function () { saveEdits(p.id, form, this); });
     cardEl.appendChild(form);
@@ -361,6 +454,7 @@
       address: form.querySelector('.e-address').value.trim(),
       website_url: form.querySelector('.e-web').value.trim() || null,
       description: form.querySelector('.e-description').value.trim(),
+      description_en: form.querySelector('.e-description-en').value.trim() || null,
       moderated_at: new Date().toISOString()
     };
     if (!payload.name || !payload.city || !payload.address) {

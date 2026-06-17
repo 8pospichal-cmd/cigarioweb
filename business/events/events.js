@@ -82,7 +82,17 @@
 
     var s = await sb.auth.getSession();
     setUser(s.data.session ? s.data.session.user : null);
-    sb.auth.onAuthStateChange(function (_e, session) { setUser(session ? session.user : null); });
+    sb.auth.onAuthStateChange(function (_e, session) { handleAuthChange(session); });
+  }
+  function handleAuthChange(session) {
+    var nextUser = session ? session.user : null;
+    if (!nextUser) { setUser(null); return; }
+    if (user && user.id === nextUser.id) {
+      user = nextUser;
+      if ($('bz-userline')) $('bz-userline').textContent = user.email || '';
+      return;
+    }
+    setUser(nextUser);
   }
   function setAdminTabs(on) {
     Array.prototype.forEach.call(document.querySelectorAll('.bz-tab-admin'), function (el) { el.classList.toggle('hidden', !on); });
