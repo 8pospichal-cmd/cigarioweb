@@ -181,10 +181,11 @@
       var m = L.marker([lat, lng], { icon: markerIcon(p), title: p.name || 'Venue' });
       m.bindPopup(
         '<strong>' + escapeHtml(p.name || 'Venue') + '</strong>' +
-        '<span>' + escapeHtml([TYPE_LABELS[p.type] || p.type, p.city].filter(Boolean).join(' · ')) + '</span>' +
-        '<button type="button" class="bz-map-popup-action" data-place-id="' + p.id + '">Show in list</button>'
+        '<span>' + escapeHtml([TYPE_LABELS[p.type] || p.type, p.city].filter(Boolean).join(' · ')) + '</span>'
       );
-      m.on('click', function () { focusVenue(p.id); });
+      m.on('click', function () {
+        window.setTimeout(function () { focusVenue(p.id); }, 0);
+      });
       adminMarkers.addLayer(m);
     });
     if ($('bz-admin-map-count')) {
@@ -199,14 +200,12 @@
   function focusVenue(id) {
     var el = document.querySelector('[data-place-id="' + id + '"]');
     if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var offset = 112;
+    var top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     el.classList.add('bz-card-focus');
     setTimeout(function () { el.classList.remove('bz-card-focus'); }, 2600);
   }
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest && e.target.closest('.bz-map-popup-action');
-    if (btn) focusVenue(btn.getAttribute('data-place-id'));
-  });
 
   // ── Events moderation ──
   async function loadEvents() {
@@ -289,7 +288,7 @@
       (p.moderation_note ? '<div class="bz-review-note"><strong>Note to owner</strong><p>' + escapeHtml(p.moderation_note) + '</p></div>' : '') +
       (p.website_url ? '<p style="margin:6px 0 0"><a href="' + p.website_url + '" target="_blank" rel="noopener">' + escapeHtml(p.website_url) + '</a></p>' : '') +
       '<div class="bz-slots" style="margin-top:12px">' + imgs + '</div>' +
-      '<div class="bz-manager-box"><p class="bz-section-label">Managers</p><div class="bz-manager-list">Loading managers…</div></div>' +
+      '<details class="bz-manager-box"><summary><span>Access</span><em>Manage owners and managers</em></summary><div class="bz-manager-panel"><div class="bz-manager-list">Loading access…</div></div></details>' +
       '<div class="bz-actions"></div>';
     el.querySelector('.bz-place-name').textContent = p.name;
     loadManagers(p.id, el.querySelector('.bz-manager-box'));

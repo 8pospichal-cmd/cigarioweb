@@ -1412,11 +1412,6 @@ body.bz-modal-open{overflow:hidden}
 .bz-admin-map .leaflet-popup-content{display:grid;gap:5px;min-width:190px;margin:12px 14px}
 .bz-admin-map .leaflet-popup-content strong{font-size:14px;line-height:1.2}
 .bz-admin-map .leaflet-popup-content span{color:var(--text-secondary);font-size:12px}
-.bz-map-popup-action{
-  justify-self:start;margin-top:5px;border:1px solid rgba(232,201,106,.36);border-radius:999px;
-  padding:6px 10px;background:rgba(201,168,76,.14);color:var(--gold-light);
-  font:inherit;font-size:12px;font-weight:800;cursor:pointer
-}
 .bz-admin-map-pin-wrap{background:transparent;border:0}
 .bz-admin-map-pin{
   display:block;width:18px;height:18px;border-radius:999px;background:var(--pin);
@@ -1435,10 +1430,53 @@ body.bz-modal-open{overflow:hidden}
 .bz-admin-edit textarea{min-height:120px}
 .bz-manager-box{
   margin-top:14px;
-  padding:14px;
   border:1px solid var(--stroke);
   border-radius:18px;
   background:rgba(255,255,255,.035);
+  overflow:hidden;
+}
+.bz-manager-box summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:46px;
+  padding:0 14px;
+  cursor:pointer;
+  list-style:none;
+  color:var(--text);
+  user-select:none;
+}
+.bz-manager-box summary::-webkit-details-marker{display:none}
+.bz-manager-box summary span{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.1px;
+  text-transform:uppercase;
+  color:var(--gold-light);
+}
+.bz-manager-box summary span::before{
+  content:'';
+  width:7px;
+  height:7px;
+  border-right:2px solid currentColor;
+  border-bottom:2px solid currentColor;
+  transform:rotate(-45deg);
+  transition:transform .18s ease;
+}
+.bz-manager-box[open] summary span::before{transform:rotate(45deg)}
+.bz-manager-box summary em{
+  color:var(--text-muted);
+  font-size:12px;
+  font-style:normal;
+  font-weight:700;
+}
+.bz-manager-panel{
+  padding:0 14px 14px;
+  border-top:1px solid rgba(255,255,255,.07);
 }
 .bz-manager-list{display:grid;gap:8px}
 .bz-manager-row{
