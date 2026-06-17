@@ -5,7 +5,7 @@
   var STATUS_LABELS = { approved: 'Approved', pending: 'Pending', draft: 'Draft', hidden: 'Changes requested' };
   var REC_LABELS = { none: 'One-off', weekly: 'Every week', biweekly: 'Every 2 weeks', monthly: 'Every month' };
   var user = null, isAdmin = false, filter = 'pending', query = '', rowsCache = [], mode = 'venues', eventFilter = 'live';
-  var adminMap = null, adminMarkers = null, mapReady = false;
+  var adminMap = null, adminMarkers = null, mapReady = false, adminMapHasInitialView = false;
   function fmtDate(s) {
     if (!s) return '';
     return new Intl.DateTimeFormat('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(s));
@@ -179,13 +179,7 @@
       var lat = parseFloat(p.latitude), lng = parseFloat(p.longitude);
       bounds.push([lat, lng]);
       var m = L.marker([lat, lng], { icon: markerIcon(p), title: p.name || 'Venue' });
-      m.bindPopup(
-        '<strong>' + escapeHtml(p.name || 'Venue') + '</strong>' +
-        '<span>' + escapeHtml([TYPE_LABELS[p.type] || p.type, p.city].filter(Boolean).join(' · ')) + '</span>'
-      );
-      m.on('click', function () {
-        window.setTimeout(function () { focusVenue(p.id); }, 0);
-      });
+      m.on('click', function () { focusVenue(p.id); });
       adminMarkers.addLayer(m);
     });
     if ($('bz-admin-map-count')) {
@@ -193,13 +187,20 @@
         ? mapped.length + ' of ' + rows.length + ' venues shown'
         : 'No venues with map pins';
     }
-    if (bounds.length) adminMap.fitBounds(bounds, { padding: [34, 34], maxZoom: 13 });
-    else adminMap.setView([50.08, 14.42], 5);
+    if (!adminMapHasInitialView) {
+      if (bounds.length) adminMap.fitBounds(bounds, { padding: [34, 34], maxZoom: 13 });
+      else adminMap.setView([50.08, 14.42], 5);
+      adminMapHasInitialView = true;
+    }
     setTimeout(function () { adminMap.invalidateSize(); }, 80);
   }
   function focusVenue(id) {
     var el = document.querySelector('[data-place-id="' + id + '"]');
     if (!el) return;
+    var list = $('bz-list');
+    if (list && list.firstElementChild !== el) {
+      list.insertBefore(el, list.firstElementChild);
+    }
     var offset = 112;
     var top = el.getBoundingClientRect().top + window.pageYOffset - offset;
     window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
