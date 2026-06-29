@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="noindex" />
+  <title>Cigario Business — Events</title>
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="/business/business.css" />
+</head>
+<body>
+  <div class="bz-top">
+    <div class="bz-top-inner">
+      <a href="/business/" class="bz-logo">Cigario<span>Business</span></a>
+      <div class="bz-top-right">
+        <a href="#bz-auth" class="bz-login-link bz-public-link">Login</a>
+        <nav class="bz-nav hidden" id="bz-nav">
+          <a href="/business/" class="bz-tab">My venues</a>
+          <a href="/business/events/" class="bz-tab active">Events</a>
+          <a href="/business/admin/" class="bz-tab bz-tab-admin hidden">Admin</a>
+        </nav>
+        <div class="bz-profile-menu hidden" id="bz-profile-menu">
+          <button class="bz-profile-button" id="bz-profile-button" type="button" aria-expanded="false" aria-controls="bz-profile-dropdown">Profile</button>
+          <div class="bz-profile-dropdown hidden" id="bz-profile-dropdown">
+            <span id="bz-userline" class="bz-profile-email"></span>
+            <a href="#" id="bz-signout" class="bz-profile-signout">Sign out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Logged-in side rail ── -->
+  <aside id="bz-sidebar" class="bz-sidebar hidden" aria-label="Owner navigation">
+    <nav class="bz-side-nav">
+      <a href="/business/" class="bz-side-link">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>
+        <span>My venues</span>
+      </a>
+      <a href="/business/events/" class="bz-side-link active">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></svg>
+        <span>Events</span>
+      </a>
+      <span class="bz-side-link locked" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h9l3 3v13H6z"/><path d="M9 4v5h6"/></svg>
+        <span>Reservations</span>
+        <em class="bz-side-soon">Soon</em>
+      </span>
+      <span class="bz-side-link locked" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        <span>Statistics</span>
+        <em class="bz-side-soon">Soon</em>
+      </span>
+      <span class="bz-side-link locked" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4 2.5 5 5.5.8-4 3.9.9 5.5L12 17l-4.9 2.6.9-5.5-4-3.9 5.5-.8z"/></svg>
+        <span>Reviews</span>
+        <em class="bz-side-soon">Soon</em>
+      </span>
+      <span class="bz-side-link locked" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M17.5 20c0-2.3-1-4-2.5-4.6"/></svg>
+        <span>Users</span>
+        <em class="bz-side-soon">Soon</em>
+      </span>
+      <a href="/business/admin/" class="bz-side-link bz-tab-admin hidden">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.2 3 7.7 7 9 4-1.3 7-4.8 7-9V6z"/></svg>
+        <span>Admin</span>
+      </a>
+    </nav>
+
+    <div class="bz-side-download">
+      <p class="bz-side-download-title">Cigario App</p>
+      <p class="bz-side-download-sub">Download and try the app on your phone.</p>
+      <div class="bz-side-stores">
+        <a href="https://apps.apple.com/app/cigario/id6762789713" class="store-btn" target="_blank" rel="noopener" aria-label="Download on the App Store">
+          <svg class="store-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+          <div class="store-btn-text">
+            <span class="store-label">Download on the</span>
+            <span class="store-name">App Store</span>
+          </div>
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.pristavkaribiku.cigario" class="store-btn" target="_blank" rel="noopener" aria-label="Get it on Google Play">
+          <svg class="store-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true">
+            <path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12 3.84 21.85C3.34 21.61 3 21.09 3 20.5zm13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27zm3.35-4.31c.34.27.59.69.59 1.19s-.22.9-.57 1.18l-2.29 1.32-2.5-2.5 2.5-2.5 2.27 1.31zM6.05 2.66l10.76 6.22-2.27 2.27-8.49-8.49z"/>
+          </svg>
+          <div class="store-btn-text">
+            <span class="store-label">Get it on</span>
+            <span class="store-name">Google Play</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Sign in -->
+  <div id="bz-auth" class="bz-auth hidden">
+    <div class="bz-card">
+      <h1 class="bz-h1">Sign in</h1>
+      <p class="bz-sub">Continue with Google to access your Cigario Business account.</p>
+      <button class="bz-google-login bz-google-login-block" id="bz-send" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="#4285F4" d="M21.8 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.5a4.7 4.7 0 0 1-2 3.1v2.6h3.3c1.9-1.8 3-4.4 3-7.7z"/>
+          <path fill="#34A853" d="M12 22c2.7 0 5-0.9 6.7-2.5l-3.3-2.6c-.9.6-2.1 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3v2.7A10 10 0 0 0 12 22z"/>
+          <path fill="#FBBC05" d="M6.4 13.8a6 6 0 0 1 0-3.6V7.5H3a10 10 0 0 0 0 9l3.4-2.7z"/>
+          <path fill="#EA4335" d="M12 6.1c1.5 0 2.8.5 3.8 1.5l2.9-2.9A9.8 9.8 0 0 0 12 2a10 10 0 0 0-9 5.5l3.4 2.7C7.2 7.9 9.4 6.1 12 6.1z"/>
+        </svg>
+        Continue with Google
+      </button>
+      <div class="bz-msg" id="bz-auth-msg"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="bz-dash" class="bz-wrap hidden">
+    <h1 class="bz-h1">Events</h1>
+
+    <div class="bz-events-hero">
+      <div class="bz-events-hero-media" aria-hidden="true"></div>
+      <div class="bz-events-hero-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/><rect x="7" y="12.5" width="3" height="3" rx=".6" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <div class="bz-events-hero-copy">
+        <h2>Events are coming soon</h2>
+        <p>This feature is being prepared. Venue owners cannot publish events yet.</p>
+      </div>
+      <button class="bz-btn bz-events-hero-cta bz-btn-locked" id="e-hero-cta" type="button" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.75" y="10.25" width="12.5" height="9" rx="2.25"></rect><path d="M8.75 10.25V8a3.25 3.25 0 0 1 6.5 0v2.25"></path></svg>
+        Locked
+      </button>
+    </div>
+
+    <div id="bz-events-locked" class="bz-card bz-events-locked">
+      <p class="bz-section-label">Not live yet</p>
+      <h2>Event publishing is currently locked.</h2>
+      <p>Owners will be able to create cigar nights, tastings and special evenings here once Cigario Events is ready.</p>
+    </div>
+
+    <div id="bz-no-venue" class="bz-card hidden">
+      <p>You need an <strong>approved venue</strong> first. Add or get your venue approved in the <a href="/business/">Venues portal</a>, then come back here.</p>
+    </div>
+    <div id="bz-events"></div>
+    <p class="bz-owner-note">Cigario is the owner of this directory and reserves the full right to edit or remove any listing or event at any time.</p>
+  </div>
+
+  <!-- Event form -->
+  <div id="bz-form" class="bz-wrap hidden">
+    <h1 class="bz-h1" id="bz-form-title">New event</h1>
+    <p class="bz-sub">Add the details, a photo, and the date &amp; time.</p>
+
+    <div class="bz-card">
+      <div class="bz-field">
+        <label class="bz-label">Venue <span class="bz-req">*</span></label>
+        <select class="bz-select" id="e-venue"></select>
+      </div>
+      <div class="bz-field">
+        <label class="bz-label">Title <span class="bz-req">*</span></label>
+        <input class="bz-input" id="e-title" type="text" placeholder="e.g. Friday cigar &amp; rum night" />
+      </div>
+      <div class="bz-field" style="margin-bottom:0">
+        <label class="bz-label">Description</label>
+        <textarea class="bz-textarea" id="e-desc" placeholder="What's the event about? Who is it for?"></textarea>
+      </div>
+    </div>
+
+    <div class="bz-card">
+      <p class="bz-section-label">When</p>
+      <div class="bz-row">
+        <div class="bz-field">
+          <label class="bz-label">Date <span class="bz-req">*</span></label>
+          <input class="bz-input" id="e-date" type="date" />
+        </div>
+        <div class="bz-field">
+          <label class="bz-label">Start time <span class="bz-req">*</span></label>
+          <select class="bz-select" id="e-time"></select>
+        </div>
+      </div>
+      <div class="bz-field">
+        <label class="bz-label">Repeats</label>
+        <select class="bz-select" id="e-recurrence">
+          <option value="none">One-off</option>
+          <option value="weekly">Every week</option>
+          <option value="biweekly">Every 2 weeks</option>
+          <option value="monthly">Every month</option>
+        </select>
+      </div>
+      <div class="bz-field hidden" id="e-until-wrap" style="margin-bottom:0">
+        <label class="bz-label">Repeat until (optional)</label>
+        <input class="bz-input" id="e-until" type="date" />
+      </div>
+    </div>
+
+    <div class="bz-card">
+      <p class="bz-section-label">Photo</p>
+      <div class="bz-slots" id="bz-photo" style="grid-template-columns:repeat(2,1fr)"></div>
+    </div>
+
+    <div class="bz-msg" id="bz-form-msg"></div>
+    <div class="bz-actions">
+      <button class="bz-btn bz-btn-locked" id="e-save" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.75" y="10.25" width="12.5" height="9" rx="2.25"></rect><path d="M8.75 10.25V8a3.25 3.25 0 0 1 6.5 0v2.25"></path></svg>
+        Publishing locked
+      </button>
+      <button class="bz-btn bz-btn-ghost" id="e-cancel">Back</button>
+      <button class="bz-btn bz-btn-ghost hidden" id="e-duplicate">Duplicate / re-run</button>
+      <button class="bz-btn bz-btn-danger hidden" id="e-delete" style="margin-left:auto">Delete</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/business/config.js"></script>
+  <script src="/business/events/events.js"></script>
+  <script src="/business/motion.js"></script>
+</body>
+</html>
